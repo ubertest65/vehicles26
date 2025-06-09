@@ -31,7 +31,7 @@ export default function DashboardHeader({ username, isAdmin = false }: Dashboard
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Car className="h-6 w-6" />
-          <span className="font-bold text-lg">Fahrzeugmeldesystem</span>
+          <span className="font-bold text-lg">Fahrzeug Tracker</span>
         </div>
 
         <nav className="hidden md:flex items-center gap-6">

@@ -199,8 +199,8 @@ export default function LoginForm() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Anmelden</CardTitle>
-        <CardDescription>Geben Sie Ihre Fahrerdaten ein.</CardDescription>
+        <CardTitle>Anmeldung</CardTitle>
+        <CardDescription>Geben Sie Ihre Anmeldedaten ein, um auf den Fahrzeugtracker zuzugreifen</CardDescription>
       </CardHeader>
       <form onSubmit={handleLogin}>
         <CardContent className="space-y-4">
