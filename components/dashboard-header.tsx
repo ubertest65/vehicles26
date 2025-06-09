@@ -31,7 +31,7 @@ export default function DashboardHeader({ username, isAdmin = false }: Dashboard
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Car className="h-6 w-6" />
-          <span className="font-bold text-lg">Vehicle Tracker</span>
+          <span className="font-bold text-lg">Fahrzeug Tracker</span>
         </div>
 
         <nav className="hidden md:flex items-center gap-6">
@@ -45,7 +45,7 @@ export default function DashboardHeader({ username, isAdmin = false }: Dashboard
                 Admin Dashboard
               </Link>
               <Link href="/admin/users" className="text-sm font-medium hover:underline">
-                Manage Users
+                Benutzer verwalten
               </Link>
             </>
           )}
@@ -54,11 +54,11 @@ export default function DashboardHeader({ username, isAdmin = false }: Dashboard
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <User className="h-4 w-4" />
-            <span className="text-sm font-medium">{username || "User"}</span>
+            <span className="text-sm font-medium">{username || "Benutzer"}</span>
           </div>
           <Button variant="ghost" size="sm" onClick={handleLogout}>
             <LogOut className="h-4 w-4 mr-2" />
-            Logout
+            Abmelden
           </Button>
         </div>
       </div>
