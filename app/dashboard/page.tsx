@@ -53,7 +53,7 @@ export default function Dashboard() {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <p>Loading dashboard...</p>
+        <p>Dashboard wird geladen...</p>
       </div>
     )
   }
@@ -67,16 +67,16 @@ export default function Dashboard() {
       <DashboardHeader username={user.username} isAdmin={user.role_id === 1} />
       <div className="container mx-auto py-8 px-4 max-w-2xl">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">Vehicle Condition Tracker</h1>
+          <h1 className="text-3xl font-bold">Fahrzeugzustand Tracker</h1>
           <Button variant="outline" onClick={() => router.push("/history")} className="flex items-center gap-2">
             <History className="h-4 w-4" />
-            View History
+            Verlauf anzeigen
           </Button>
         </div>
 
         <div className="space-y-8">
           <div>
-            <h2 className="text-2xl font-semibold mb-4">New Vehicle Entry</h2>
+            <h2 className="text-2xl font-semibold mb-4">Neuer Fahrzeugeintrag</h2>
             <VehicleEntryForm userId={user.id} vehicles={vehicles} />
           </div>
         </div>
