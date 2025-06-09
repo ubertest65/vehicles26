@@ -26,10 +26,10 @@ interface VehicleEntryFormProps {
 }
 
 const REQUIRED_PHOTO_TYPES = [
-  { id: "vorne_links", label: "Front Left" },
-  { id: "vorne_rechts", label: "Front Right" },
-  { id: "hinten_links", label: "Rear Left" },
-  { id: "hinten_rechts", label: "Rear Right" },
+  { id: "vorne_links", label: "Vorne Links" },
+  { id: "vorne_rechts", label: "Vorne Rechts" },
+  { id: "hinten_links", label: "Hinten Links" },
+  { id: "hinten_rechts", label: "Hinten Rechts" },
 ]
 
 export default function VehicleEntryForm({ userId, vehicles = [] }: VehicleEntryFormProps) {
@@ -56,8 +56,8 @@ export default function VehicleEntryForm({ userId, vehicles = [] }: VehicleEntry
       // Chrome-specific: Validate file before processing
       if (!file.type.startsWith("image/")) {
         toast({
-          title: "Invalid File",
-          description: "Please select a valid image file",
+          title: "Ungültige Datei",
+          description: "Bitte wählen Sie eine gültige Bilddatei aus",
           variant: "destructive",
         })
         return
@@ -72,8 +72,8 @@ export default function VehicleEntryForm({ userId, vehicles = [] }: VehicleEntry
       } catch (error) {
         console.error("Error creating preview URL:", error)
         toast({
-          title: "Preview Error",
-          description: "Could not create image preview",
+          title: "Vorschaufehler",
+          description: "Bildvorschau konnte nicht erstellt werden",
           variant: "destructive",
         })
       }
@@ -147,7 +147,7 @@ export default function VehicleEntryForm({ userId, vehicles = [] }: VehicleEntry
 
     if (error) {
       console.error("Upload error:", error)
-      throw new Error(`Upload failed: ${error.message}`)
+      throw new Error(`Upload fehlgeschlagen: ${error.message}`)
     }
 
     console.log("Upload successful:", data)
@@ -179,8 +179,8 @@ export default function VehicleEntryForm({ userId, vehicles = [] }: VehicleEntry
     // Chrome-specific: Additional validation
     if (!navigator.onLine) {
       toast({
-        title: "No Internet Connection",
-        description: "Please check your internet connection and try again",
+        title: "Keine Internetverbindung",
+        description: "Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut",
         variant: "destructive",
       })
       return
@@ -189,8 +189,8 @@ export default function VehicleEntryForm({ userId, vehicles = [] }: VehicleEntry
     // Validate required fields
     if (!vehicleId || !mileage) {
       toast({
-        title: "Missing Information",
-        description: "Please select a vehicle and enter the mileage",
+        title: "Fehlende Informationen",
+        description: "Bitte wählen Sie ein Fahrzeug aus und geben Sie den Kilometerstand ein",
         variant: "destructive",
       })
       return
@@ -200,8 +200,8 @@ export default function VehicleEntryForm({ userId, vehicles = [] }: VehicleEntry
     const missingPhotos = Object.entries(photos).filter(([_, file]) => !file)
     if (missingPhotos.length > 0) {
       toast({
-        title: "Missing Photos",
-        description: "Please take all four required photos",
+        title: "Fehlende Fotos",
+        description: "Bitte machen Sie alle vier erforderlichen Fotos",
         variant: "destructive",
       })
       return
@@ -211,8 +211,8 @@ export default function VehicleEntryForm({ userId, vehicles = [] }: VehicleEntry
     for (const [type, file] of Object.entries(photos)) {
       if (file && (file.size === 0 || !file.type.startsWith("image/"))) {
         toast({
-          title: "Invalid Photo",
-          description: `The ${type} photo appears to be corrupted. Please retake it.`,
+          title: "Ungültiges Foto",
+          description: `Das ${type} Foto scheint beschädigt zu sein. Bitte machen Sie es erneut.`,
           variant: "destructive",
         })
         return
@@ -241,7 +241,7 @@ export default function VehicleEntryForm({ userId, vehicles = [] }: VehicleEntry
 
       if (entryError) {
         console.error("Entry error:", entryError)
-        throw new Error(`Failed to create entry: ${entryError.message}`)
+        throw new Error(`Eintrag konnte nicht erstellt werden: ${entryError.message}`)
       }
 
       console.log("Entry created:", entry)
@@ -266,7 +266,7 @@ export default function VehicleEntryForm({ userId, vehicles = [] }: VehicleEntry
 
           if (photoError) {
             console.error(`Photo record error for ${type}:`, photoError)
-            throw new Error(`Failed to save ${type} photo record: ${photoError.message}`)
+            throw new Error(`${type} Foto konnte nicht gespeichert werden: ${photoError.message}`)
           }
 
           console.log(`${type} photo saved successfully`)
@@ -296,7 +296,7 @@ export default function VehicleEntryForm({ userId, vehicles = [] }: VehicleEntry
 
           if (photoError) {
             console.error(`Optional photo record error:`, photoError)
-            throw new Error(`Failed to save optional photo record: ${photoError.message}`)
+            throw new Error(`Optionales Foto konnte nicht gespeichert werden: ${photoError.message}`)
           }
 
           console.log(`Optional photo ${i + 1} saved successfully`)
@@ -310,8 +310,8 @@ export default function VehicleEntryForm({ userId, vehicles = [] }: VehicleEntry
       setShowSuccess(true)
 
       toast({
-        title: "Entry Saved Successfully!",
-        description: `Vehicle condition recorded on ${currentDateTime.date} at ${currentDateTime.time}`,
+        title: "Eintrag erfolgreich gespeichert!",
+        description: `Fahrzeugzustand am ${currentDateTime.date} um ${currentDateTime.time} Uhr erfasst`,
       })
 
       // Reset form after a short delay
@@ -335,8 +335,8 @@ export default function VehicleEntryForm({ userId, vehicles = [] }: VehicleEntry
     } catch (error) {
       console.error("Submit error:", error)
       toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to save vehicle entry",
+        title: "Fehler",
+        description: error instanceof Error ? error.message : "Fahrzeugeintrag konnte nicht gespeichert werden",
         variant: "destructive",
       })
     } finally {
@@ -361,8 +361,8 @@ export default function VehicleEntryForm({ userId, vehicles = [] }: VehicleEntry
         <CardContent className="pt-6">
           <div className="flex flex-col items-center justify-center py-12 text-center">
             <CheckCircle className="h-16 w-16 text-green-500 mb-4" />
-            <h3 className="text-xl font-semibold mb-2">Entry Saved Successfully!</h3>
-            <p className="text-muted-foreground">Reloading page...</p>
+            <h3 className="text-xl font-semibold mb-2">Eintrag erfolgreich gespeichert!</h3>
+            <p className="text-muted-foreground">Seite wird neu geladen...</p>
           </div>
         </CardContent>
       </Card>
@@ -375,11 +375,11 @@ export default function VehicleEntryForm({ userId, vehicles = [] }: VehicleEntry
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="vehicle" className="flex items-center gap-1">
-              Vehicle <span className="text-red-500">*</span>
+              Fahrzeug <span className="text-red-500">*</span>
             </Label>
             <Select value={vehicleId} onValueChange={setVehicleId}>
               <SelectTrigger>
-                <SelectValue placeholder="Select a vehicle" />
+                <SelectValue placeholder="Fahrzeug auswählen" />
               </SelectTrigger>
               <SelectContent>
                 {vehicles.map((vehicle) => (
@@ -393,7 +393,7 @@ export default function VehicleEntryForm({ userId, vehicles = [] }: VehicleEntry
 
           <div className="space-y-2">
             <Label htmlFor="mileage" className="flex items-center gap-1">
-              Mileage (km) <span className="text-red-500">*</span>
+              Kilometerstand (km) <span className="text-red-500">*</span>
             </Label>
             <Input
               id="mileage"
@@ -406,19 +406,19 @@ export default function VehicleEntryForm({ userId, vehicles = [] }: VehicleEntry
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="notes">Notes (Optional)</Label>
+            <Label htmlFor="notes">Notizen (Optional)</Label>
             <Textarea
               id="notes"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="Any damage or issues to report?"
+              placeholder="Schäden oder Probleme zu melden?"
               rows={3}
             />
           </div>
 
           <div className="space-y-4">
             <Label className="flex items-center gap-1">
-              Required Photos <span className="text-red-500">*</span>
+              Erforderliche Fotos <span className="text-red-500">*</span>
             </Label>
             <div className="grid grid-cols-2 gap-4">
               {REQUIRED_PHOTO_TYPES.map((type) => (
@@ -431,7 +431,7 @@ export default function VehicleEntryForm({ userId, vehicles = [] }: VehicleEntry
                       <div className="relative aspect-video w-full overflow-hidden rounded-md border">
                         <img
                           src={photoPreview[type.id] || "/placeholder.svg"}
-                          alt={`${type.label} preview`}
+                          alt={`${type.label} Vorschau`}
                           className="object-cover w-full h-full"
                         />
                         <Button
@@ -441,7 +441,7 @@ export default function VehicleEntryForm({ userId, vehicles = [] }: VehicleEntry
                           className="absolute bottom-2 right-2"
                           onClick={() => handlePhotoChange(type.id, null)}
                         >
-                          Change
+                          Ändern
                         </Button>
                       </div>
                     ) : (
@@ -450,7 +450,7 @@ export default function VehicleEntryForm({ userId, vehicles = [] }: VehicleEntry
                         className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-red-300 rounded-md cursor-pointer hover:bg-muted/50 transition-colors"
                       >
                         <Camera className="w-8 h-8 mb-2 text-muted-foreground" />
-                        <span className="text-sm text-muted-foreground">Take Photo</span>
+                        <span className="text-sm text-muted-foreground">Foto aufnehmen</span>
                         <input
                           id={`photo-${type.id}`}
                           type="file"
@@ -469,13 +469,13 @@ export default function VehicleEntryForm({ userId, vehicles = [] }: VehicleEntry
           </div>
 
           <div className="space-y-4">
-            <Label>Optional Photos</Label>
+            <Label>Optionale Fotos</Label>
             <div className="grid grid-cols-3 gap-2">
               {optionalPhotos.map((file, index) => (
                 <div key={index} className="relative aspect-square w-full overflow-hidden rounded-md border">
                   <img
                     src={photoPreview[`optional-${index || "/placeholder.svg"}`] || "/placeholder.svg"}
-                    alt={`Optional photo ${index + 1}`}
+                    alt={`Optionales Foto ${index + 1}`}
                     className="object-cover w-full h-full"
                   />
                   <Button
@@ -491,7 +491,7 @@ export default function VehicleEntryForm({ userId, vehicles = [] }: VehicleEntry
               ))}
               <label className="flex flex-col items-center justify-center aspect-square w-full border-2 border-dashed rounded-md cursor-pointer hover:bg-muted/50 transition-colors">
                 <Upload className="w-6 h-6 mb-1 text-muted-foreground" />
-                <span className="text-xs text-muted-foreground">Add Photo</span>
+                <span className="text-xs text-muted-foreground">Foto hinzufügen</span>
                 <input
                   type="file"
                   accept="image/*"
@@ -507,10 +507,10 @@ export default function VehicleEntryForm({ userId, vehicles = [] }: VehicleEntry
             {loading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Saving Entry...
+                Eintrag wird gespeichert...
               </>
             ) : (
-              "Save Vehicle Entry"
+              "Fahrzeugeintrag speichern"
             )}
           </Button>
         </form>
