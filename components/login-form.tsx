@@ -23,21 +23,47 @@ export default function LoginForm() {
   const supabase = createClientComponentClient()
 
   useEffect(() => {
+    // Chrome-specific: Check if localStorage is available
+    if (typeof Storage === "undefined") {
+      toast({
+        title: "Storage Not Available",
+        description: "Your browser doesn't support local storage. Please use a modern browser.",
+        variant: "destructive",
+      })
+      return
+    }
+
     // Check if biometric authentication is available
     if ("credentials" in navigator && "create" in navigator.credentials) {
       setBiometricAvailable(true)
     }
 
-    // Check for saved credentials
-    const saved = localStorage.getItem("saved_credentials")
-    if (saved) {
-      setSavedCredentials(JSON.parse(saved))
+    // Check for saved credentials with Chrome-specific error handling
+    try {
+      const saved = localStorage.getItem("saved_credentials")
+      if (saved) {
+        setSavedCredentials(JSON.parse(saved))
+      }
+    } catch (error) {
+      console.error("Error reading saved credentials:", error)
+      localStorage.removeItem("saved_credentials") // Clear corrupted data
     }
 
-    // Check for existing session
-    const userSession = localStorage.getItem("user_session")
-    if (userSession) {
-      router.push("/dashboard")
+    // Check for existing session with Chrome-specific error handling
+    try {
+      const userSession = localStorage.getItem("user_session")
+      if (userSession) {
+        const parsed = JSON.parse(userSession)
+        // Validate session structure
+        if (parsed && parsed.id && parsed.username) {
+          router.push("/dashboard")
+        } else {
+          localStorage.removeItem("user_session") // Clear invalid session
+        }
+      }
+    } catch (error) {
+      console.error("Error reading user session:", error)
+      localStorage.removeItem("user_session") // Clear corrupted session
     }
   }, [router])
 
@@ -82,15 +108,32 @@ export default function LoginForm() {
         console.error("Session error:", sessionError)
       }
 
-      // Store user info in localStorage for client-side auth
+      // Store user info in localStorage for client-side auth with Chrome-specific handling
       const userSession = {
         id: userData.id,
         username: userData.username,
         role_id: userData.role_id,
         token: sessionToken,
+        timestamp: Date.now(), // Add timestamp for Chrome
       }
 
-      localStorage.setItem("user_session", JSON.stringify(userSession))
+      try {
+        localStorage.setItem("user_session", JSON.stringify(userSession))
+
+        // Chrome-specific: Verify the session was saved
+        const verification = localStorage.getItem("user_session")
+        if (!verification) {
+          throw new Error("Failed to save session")
+        }
+      } catch (error) {
+        console.error("Error saving session:", error)
+        toast({
+          title: "Session Error",
+          description: "Could not save login session. Please try again.",
+          variant: "destructive",
+        })
+        return
+      }
 
       // Save credentials for biometric login (if user agrees)
       if (biometricAvailable && !savedCredentials) {
