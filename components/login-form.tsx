@@ -26,8 +26,8 @@ export default function LoginForm() {
     // Chrome-specific: Check if localStorage is available
     if (typeof Storage === "undefined") {
       toast({
-        title: "Storage Not Available",
-        description: "Your browser doesn't support local storage. Please use a modern browser.",
+        title: "Speicher nicht verfügbar",
+        description: "Ihr Browser unterstützt keinen lokalen Speicher. Bitte verwenden Sie einen modernen Browser.",
         variant: "destructive",
       })
       return
@@ -84,12 +84,12 @@ export default function LoginForm() {
       console.log("User query result:", userData, userError)
 
       if (userError || !userData) {
-        throw new Error("Invalid username or password")
+        throw new Error("Ungültiger Benutzername oder Passwort")
       }
 
       // Simple password check (in production, you'd use proper hashing)
       if (userData.password_hash !== password) {
-        throw new Error("Invalid username or password")
+        throw new Error("Ungültiger Benutzername oder Passwort")
       }
 
       console.log("Password verified, creating session")
@@ -128,8 +128,8 @@ export default function LoginForm() {
       } catch (error) {
         console.error("Error saving session:", error)
         toast({
-          title: "Session Error",
-          description: "Could not save login session. Please try again.",
+          title: "Sitzungsfehler",
+          description: "Anmeldesitzung konnte nicht gespeichert werden. Bitte versuchen Sie es erneut.",
           variant: "destructive",
         })
         return
@@ -137,7 +137,9 @@ export default function LoginForm() {
 
       // Save credentials for biometric login (if user agrees)
       if (biometricAvailable && !savedCredentials) {
-        const saveCredentials = confirm("Would you like to save your login for faster access with Face ID/Touch ID?")
+        const saveCredentials = confirm(
+          "Möchten Sie Ihre Anmeldedaten für schnelleren Zugang mit Face ID/Touch ID speichern?",
+        )
         if (saveCredentials) {
           localStorage.setItem("saved_credentials", JSON.stringify({ username, password }))
         }
@@ -146,8 +148,8 @@ export default function LoginForm() {
       console.log("Session created, redirecting to dashboard")
 
       toast({
-        title: "Login Successful",
-        description: `Welcome back, ${userData.username}!`,
+        title: "Anmeldung erfolgreich",
+        description: `Willkommen zurück, ${userData.username}!`,
       })
 
       // Redirect to dashboard
@@ -155,8 +157,8 @@ export default function LoginForm() {
     } catch (error) {
       console.error("Login error:", error)
       toast({
-        title: "Login Failed",
-        description: error instanceof Error ? error.message : "An error occurred during login",
+        title: "Anmeldung fehlgeschlagen",
+        description: error instanceof Error ? error.message : "Ein Fehler ist bei der Anmeldung aufgetreten",
         variant: "destructive",
       })
     } finally {
@@ -172,7 +174,7 @@ export default function LoginForm() {
 
       // In a real implementation, you'd use WebAuthn API
       // For now, we'll simulate biometric authentication
-      const confirmed = confirm("Use saved credentials to log in?")
+      const confirmed = confirm("Gespeicherte Anmeldedaten verwenden?")
       if (!confirmed) return
 
       // Auto-fill and submit
@@ -185,8 +187,8 @@ export default function LoginForm() {
     } catch (error) {
       console.error("Biometric login error:", error)
       toast({
-        title: "Biometric Login Failed",
-        description: "Please try manual login",
+        title: "Biometrische Anmeldung fehlgeschlagen",
+        description: "Bitte versuchen Sie die manuelle Anmeldung",
         variant: "destructive",
       })
     } finally {
@@ -197,17 +199,17 @@ export default function LoginForm() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Login</CardTitle>
-        <CardDescription>Enter your credentials to access the vehicle tracker</CardDescription>
+        <CardTitle>Anmeldung</CardTitle>
+        <CardDescription>Geben Sie Ihre Anmeldedaten ein, um auf den Fahrzeugtracker zuzugreifen</CardDescription>
       </CardHeader>
       <form onSubmit={handleLogin}>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="username">Username</Label>
+            <Label htmlFor="username">Benutzername</Label>
             <Input id="username" type="text" value={username} onChange={(e) => setUsername(e.target.value)} required />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">Passwort</Label>
             <Input
               id="password"
               type="password"
@@ -222,12 +224,12 @@ export default function LoginForm() {
             {loading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Logging in...
+                Anmeldung läuft...
               </>
             ) : (
               <>
                 <User className="mr-2 h-4 w-4" />
-                Login
+                Anmelden
               </>
             )}
           </Button>
@@ -241,7 +243,7 @@ export default function LoginForm() {
               disabled={loading}
             >
               <Fingerprint className="mr-2 h-4 w-4" />
-              Quick Login
+              Schnellanmeldung
             </Button>
           )}
         </CardFooter>
