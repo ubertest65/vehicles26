@@ -9,7 +9,11 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata = {
   title: "Vehicle Condition Tracker",
   description: "Track vehicle condition between shifts",
-    generator: 'v0.dev'
+  // Chrome-specific: Add viewport and other meta configurations
+  viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no",
+  themeColor: "#ffffff",
+  // Chrome-specific: Ensure proper PWA handling
+  manifest: "/manifest.json",
 }
 
 export default function RootLayout({
@@ -19,6 +23,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        {/* Chrome-specific: Add meta tags for better compatibility */}
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+      </head>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           {children}
