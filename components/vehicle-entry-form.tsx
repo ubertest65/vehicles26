@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import { Card, CardContent } from "@/components/ui/card"
@@ -53,16 +53,39 @@ export default function VehicleEntryForm({ userId, vehicles = [] }: VehicleEntry
 
   const handlePhotoChange = (type: string, file: File | null) => {
     if (file) {
+      // Chrome-specific: Validate file before processing
+      if (!file.type.startsWith("image/")) {
+        toast({
+          title: "Invalid File",
+          description: "Please select a valid image file",
+          variant: "destructive",
+        })
+        return
+      }
+
       setPhotos((prev) => ({ ...prev, [type]: file }))
 
-      // Create preview URL
-      const url = URL.createObjectURL(file)
-      setPhotoPreview((prev) => ({ ...prev, [type]: url }))
+      // Create preview URL with Chrome-specific handling
+      try {
+        const url = URL.createObjectURL(file)
+        setPhotoPreview((prev) => ({ ...prev, [type]: url }))
+      } catch (error) {
+        console.error("Error creating preview URL:", error)
+        toast({
+          title: "Preview Error",
+          description: "Could not create image preview",
+          variant: "destructive",
+        })
+      }
     } else {
       setPhotos((prev) => ({ ...prev, [type]: null }))
       setPhotoPreview((prev) => {
         const newPreviews = { ...prev }
-        delete newPreviews[type]
+        if (newPreviews[type]) {
+          // Chrome-specific: Properly revoke object URLs
+          URL.revokeObjectURL(newPreviews[type])
+          delete newPreviews[type]
+        }
         return newPreviews
       })
     }
@@ -112,9 +135,14 @@ export default function VehicleEntryForm({ userId, vehicles = [] }: VehicleEntry
   const uploadPhoto = async (file: File, fileName: string): Promise<string> => {
     console.log(`Uploading file: ${fileName}`)
 
-    const { data, error } = await supabase.storage.from("vehicle-photos").upload(fileName, file, {
+    // Chrome-specific: Ensure file is properly read
+    const fileBuffer = await file.arrayBuffer()
+    const blob = new Blob([fileBuffer], { type: file.type })
+
+    const { data, error } = await supabase.storage.from("vehicle-photos").upload(fileName, blob, {
       cacheControl: "3600",
       upsert: false,
+      contentType: file.type, // Explicitly set content type for Chrome
     })
 
     if (error) {
@@ -148,6 +176,16 @@ export default function VehicleEntryForm({ userId, vehicles = [] }: VehicleEntry
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
+    // Chrome-specific: Additional validation
+    if (!navigator.onLine) {
+      toast({
+        title: "No Internet Connection",
+        description: "Please check your internet connection and try again",
+        variant: "destructive",
+      })
+      return
+    }
+
     // Validate required fields
     if (!vehicleId || !mileage) {
       toast({
@@ -158,7 +196,7 @@ export default function VehicleEntryForm({ userId, vehicles = [] }: VehicleEntry
       return
     }
 
-    // Validate required photos
+    // Validate required photos with Chrome-specific checks
     const missingPhotos = Object.entries(photos).filter(([_, file]) => !file)
     if (missingPhotos.length > 0) {
       toast({
@@ -167,6 +205,18 @@ export default function VehicleEntryForm({ userId, vehicles = [] }: VehicleEntry
         variant: "destructive",
       })
       return
+    }
+
+    // Chrome-specific: Validate all files are still valid
+    for (const [type, file] of Object.entries(photos)) {
+      if (file && (file.size === 0 || !file.type.startsWith("image/"))) {
+        toast({
+          title: "Invalid Photo",
+          description: `The ${type} photo appears to be corrupted. Please retake it.`,
+          variant: "destructive",
+        })
+        return
+      }
     }
 
     setLoading(true)
@@ -293,6 +343,17 @@ export default function VehicleEntryForm({ userId, vehicles = [] }: VehicleEntry
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    // Chrome-specific: Cleanup object URLs on unmount
+    return () => {
+      Object.values(photoPreview).forEach((url) => {
+        if (url && url.startsWith("blob:")) {
+          URL.revokeObjectURL(url)
+        }
+      })
+    }
+  }, [])
 
   if (showSuccess) {
     return (
