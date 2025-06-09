@@ -510,7 +510,7 @@ export default function VehicleEntryForm({ userId, vehicles = [] }: VehicleEntry
                 Eintrag wird gespeichert...
               </>
             ) : (
-              "Fahrzeugeintrag speichern"
+              "Daten speichern"
             )}
           </Button>
         </form>
